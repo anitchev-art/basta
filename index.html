@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guess the Price! – Kids Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #b8f2e6, #ffd6a5);
+      --primary: #ffb703;
+      --primary-dark: #fb8500;
+      --blue: #4cc9f0;
+      --pink: #ff99c8;
+      --yellow: #ffea00;
+      --card-bg: #ffffffee;
+      --text-main: #222;
+      --text-soft: #555;
+      --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.12);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --transition-fast: 0.18s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 960px;
+      min-height: 560px;
+      background: #ffffffdd;
+      border-radius: 32px;
+      box-shadow: var(--shadow-soft);
+      padding: 24px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 16px;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ff006e;
+      text-shadow: 0 3px 0 #ffffff;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .scoreboard {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: #ffffffcc;
+      padding: 8px 14px;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      font-size: 0.9rem;
+    }
+
+    .score-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f1f5f9;
+    }
+
+    .score-pill span.emoji {
+      font-size: 1.1rem;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    /* Screens */
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* Home screen */
+    .home-screen {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .home-left {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .home-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #ff006e;
+      text-shadow: 0 3px 0 #ffffff;
+    }
+
+    .home-text {
+      font-size: 1rem;
+      color: var(--text-soft);
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .category-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      transition: transform var(--transition-fast),
+        box-shadow var(--transition-fast), background 0.2s ease-out;
+      font-size: 0.85rem;
+    }
+
+    .category-card span.emoji {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+
+    .category-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+      background: #fffdf5;
+    }
+
+    .home-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 22px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform var(--transition-fast),
+        box-shadow var(--transition-fast), background 0.2s ease-out;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #222;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-radius: 999px;
+      padding: 8px 16px;
+      color: var(--text-soft);
+    }
+
+    .btn-ghost:hover {
+      background: #ffffffaa;
+    }
+
+    .home-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .fox-wrapper {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffe5f1, #ffb4a2);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .fox {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4.2rem;
+      transform: translateY(6px);
+    }
+
+    .fox-shadow {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 18px;
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 50%;
+      filter: blur(4px);
+    }
+
+    /* Quiz screen */
+    .quiz-screen {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff006e, #ffbe0b);
+      border-radius: 999px;
+      transition: width 0.25s ease-out;
+    }
+
+    .progress-stars {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #ffffffdd;
+      pointer-events: none;
+    }
+
+    .quiz-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 4px;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .product-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-soft);
+    }
+
+    .product-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1d3557;
+    }
+
+    .product-image {
+      margin-top: 6px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 2px dashed #e2e8f0;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 12px;
+    }
+
+    .product-meta {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .answers-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .answers-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1d3557;
+    }
+
+    .answers-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .answer-btn {
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+      transition: transform var(--transition-fast),
+        box-shadow var(--transition-fast), filter 0.15s ease-out;
+      color: #222;
+    }
+
+    .answer-btn span.label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .answer-btn span.badge {
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #ffffff55;
+    }
+
+    .answer-a {
+      background: var(--blue);
+    }
+
+    .answer-b {
+      background: var(--yellow);
+    }
+
+    .answer-c {
+      background: var(--pink);
+    }
+
+    .answer-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+      filter: brightness(1.05);
+    }
+
+    .answer-btn.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .answer-btn.correct {
+      box-shadow: 0 0 0 3px #2ec4b6;
+    }
+
+    .answer-btn.wrong {
+      box-shadow: 0 0 0 3px #e63946;
+    }
+
+    .feedback {
+      font-size: 0.9rem;
+      margin-top: 4px;
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-soft);
+    }
+
+    .feedback span.icon {
+      font-size: 1.1rem;
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .quiz-footer-left {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .quiz-footer-right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Results screen */
+    .results-screen {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 18px;
+    }
+
+    .badge-card {
+      background: var(--card-bg);
+      border-radius: 32px;
+      padding: 24px 26px;
+      box-shadow: var(--shadow-soft);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      min-width: 260px;
+    }
+
+    .badge-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1d3557;
+    }
+
+    .badge-label {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #ff006e;
+    }
+
+    .results-text {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      max-width: 360px;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    /* Fox in quiz & results */
+    .fox-small-wrapper {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffe5f1, #ffb4a2);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .fox-small {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+      transform: translateY(4px);
+    }
+
+    .fox-small-shadow {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 50%;
+      filter: blur(4px);
+    }
+
+    /* Confetti (simple) */
+    .confetti {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      display: none;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: 0;
+      animation: confettiFall 1s ease-out forwards;
+    }
+
+    /* Animations */
+    @keyframes float {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-20px) rotateZ(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(220px) rotateZ(260deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .app {
+        border-radius: 0;
+        min-height: 100vh;
+        max-width: 100%;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .home-screen {
+        flex-direction: column-reverse;
+      }
+
+      .quiz-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .home-right {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-block">
+        <h1>Guess the Price!</h1>
+        <div class="subtitle">
+          Playful kids’ quiz with a cartoon‑goofy fox 🦊
+        </div>
+      </div>
+      <div class="scoreboard" id="scoreboard">
+        <div class="score-pill">
+          <span class="emoji">⭐</span><span id="scoreText">Score: 0</span>
+        </div>
+        <div class="score-pill">
+          <span class="emoji">🔄</span><span id="streakText">Streak: 0</span>
+        </div>
+        <div class="score-pill">
+          <span class="emoji">🎯</span><span id="roundText">Round: 0/0</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Confetti layer -->
+      <div class="confetti" id="confettiLayer"></div>
+
+      <!-- Home Screen -->
+      <section class="screen home-screen active" id="homeScreen">
+        <div class="home-left">
+          <div class="home-title">Ready to play?</div>
+          <div class="home-text">
+            Our cartoon‑goofy fox will guide you through a fun price‑guessing
+            adventure. Pick a category or jump straight into a mixed quiz!
+          </div>
+
+          <div class="category-grid">
+            <div class="category-card" data-category="washers">
+              <span class="emoji">🧺</span>
+              Washing machines
+            </div>
+            <div class="category-card" data-category="fridges">
+              <span class="emoji">🧊</span>
+              Fridges
+            </div>
+            <div class="category-card" data-category="dishwashers">
+              <span class="emoji">🍽️</span>
+              Dishwashers
+            </div>
+            <div class="category-card" data-category="tvs">
+              <span class="emoji">📺</span>
+              TVs
+            </div>
+            <div class="category-card" data-category="mixed">
+              <span class="emoji">🎲</span>
+              Mixed mode
+            </div>
+            <div class="category-card" data-category="short">
+              <span class="emoji">⚡</span>
+              Quick 5‑round game
+            </div>
+          </div>
+
+          <div class="home-actions">
+            <button class="btn btn-primary" id="startMixedBtn">
+              <span>Start Mixed Quiz</span> <span>▶</span>
+            </button>
+            <button class="btn btn-ghost" id="startWashersBtn">
+              🧺 Washing machines only
+            </button>
+          </div>
+        </div>
+
+        <div class="home-right">
+          <div class="fox-wrapper">
+            <div class="fox">🦊</div>
+            <div class="fox-shadow"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quiz Screen -->
+      <section class="screen quiz-screen" id="quizScreen">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-stars" id="progressStars">⭐ ⭐ ⭐</div>
+        </div>
+
+        <div class="quiz-layout">
+          <div class="product-card">
+            <div class="product-label">Product</div>
+            <div class="product-name" id="productName">—</div>
+            <div class="product-image" id="productImage">
+              Product image placeholder<br />
+              (On a real site, show the actual photo here.)
+            </div>
+            <div class="product-meta" id="productMeta">—</div>
+          </div>
+
+          <div class="answers-card">
+            <div class="answers-title">What’s the correct price?</div>
+            <div class="answers-grid">
+              <button class="answer-btn answer-a" data-option="A">
+                <span class="label">
+                  <span>🅰️</span>
+                  <span id="optionAText">—</span>
+                </span>
+                <span class="badge">A</span>
+              </button>
+              <button class="answer-btn answer-b" data-option="B">
+                <span class="label">
+                  <span>🅱️</span>
+                  <span id="optionBText">—</span>
+                </span>
+                <span class="badge">B</span>
+              </button>
+              <button class="answer-btn answer-c" data-option="C">
+                <span class="label">
+                  <span>🆎</span>
+                  <span id="optionCText">—</span>
+                </span>
+                <span class="badge">C</span>
+              </button>
+            </div>
+            <div class="feedback" id="feedback">
+              <span class="icon">🦊</span>
+              <span id="feedbackText">Pick an answer and see what the fox says!</span>
+            </div>
+
+            <div class="quiz-footer">
+              <div class="quiz-footer-left" id="quizFooterLeft">
+                Category: —
+              </div>
+              <div class="quiz-footer-right">
+                <button class="btn btn-ghost" id="skipBtn">Skip</button>
+                <button class="btn btn-primary" id="nextBtn" disabled>
+                  Next round ▶
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+          <div class="fox-small-wrapper">
+            <div class="fox-small" id="foxSmall">🦊</div>
+            <div class="fox-small-shadow"></div>
+          </div>
+          <div style="font-size: 0.9rem; color: #555; max-width: 360px;">
+            Our cartoon‑goofy fox reacts to your answers with silly moves. Get a
+            streak going and watch it celebrate!
+          </div>
+        </div>
+      </section>
+
+      <!-- Results Screen -->
+      <section class="screen results-screen" id="resultsScreen">
+        <div class="fox-small-wrapper">
+          <div class="fox-small">🦊</div>
+          <div class="fox-small-shadow"></div>
+        </div>
+
+        <div class="badge-card">
+          <div class="badge-title">Your badge</div>
+          <div class="badge-label" id="badgeLabel">Price Wizard!</div>
+          <div class="results-text" id="resultsSummary">
+            You finished the quiz. Great job!
+          </div>
+        </div>
+
+        <div class="results-actions">
+          <button class="btn btn-primary" id="playAgainBtn">
+            Play again ▶
+          </button>
+          <button class="btn btn-ghost" id="backHomeBtn">
+            ⬅ Back to home
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // --- Quiz data (example set; you can extend/replace) ---
+    const QUESTIONS = [
+      {
+        category: "washers",
+        name: "Samsung WW80T4040CE",
+        meta: "8 kg, EcoBubble, Inverter motor",
+        options: {
+          A: "650 лв.",
+          B: "799 лв.",
+          C: "899 лв.",
+        },
+        correct: "B",
+      },
+      {
+        category: "washers",
+        name: "Bosch Serie 4 7kg",
+        meta: "Front‑loader, EcoSilence Drive",
+        options: {
+          A: "699 лв.",
+          B: "849 лв.",
+          C: "999 лв.",
+        },
+        correct: "A",
+      },
+      {
+        category: "fridges",
+        name: "LG NoFrost 320L",
+        meta: "NoFrost, A+++, LED display",
+        options: {
+          A: "899 лв.",
+          B: "1099 лв.",
+          C: "1299 лв.",
+        },
+        correct: "B",
+      },
+      {
+        category: "dishwashers",
+        name: "Beko 13‑set Dishwasher",
+        meta: "Full‑size, 5 programs, A++",
+        options: {
+          A: "499 лв.",
+          B: "649 лв.",
+          C: "799 лв.",
+        },
+        correct: "B",
+      },
+      {
+        category: "tvs",
+        name: "Samsung 50\" 4K Smart TV",
+        meta: "UHD, HDR, Smart OS",
+        options: {
+          A: "699 лв.",
+          B: "899 лв.",
+          C: "1199 лв.",
+        },
+        correct: "B",
+      },
+      {
+        category: "tvs",
+        name: "LG 43\" 4K Smart TV",
+        meta: "ThinQ AI, HDR10",
+        options: {
+          A: "599 лв.",
+          B: "749 лв.",
+          C: "949 лв.",
+        },
+        correct: "A",
+      },
+    ];
+
+    // --- State ---
+    let currentCategory = "mixed";
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let answered = false;
+    let shortMode = false;
+
+    // --- DOM elements ---
+    const homeScreen = document.getElementById("homeScreen");
+    const quizScreen = document.getElementById("quizScreen");
+    const resultsScreen = document.getElementById("resultsScreen");
+
+    const productNameEl = document.getElementById("productName");
+    const productMetaEl = document.getElementById("productMeta");
+    const productImageEl = document.getElementById("productImage");
+
+    const optionAText = document.getElementById("optionAText");
+    const optionBText = document.getElementById("optionBText");
+    const optionCText = document.getElementById("optionCText");
+
+    const feedbackEl = document.getElementById("feedback");
+    const feedbackTextEl = document.getElementById("feedbackText");
+
+    const quizFooterLeft = document.getElementById("quizFooterLeft");
+    const progressFill = document.getElementById("progressFill");
+    const progressStars = document.getElementById("progressStars");
+
+    const scoreText = document.getElementById("scoreText");
+    const streakText = document.getElementById("streakText");
+    const roundText = document.getElementById("roundText");
+
+    const nextBtn = document.getElementById("nextBtn");
+    const skipBtn = document.getElementById("skipBtn");
+
+    const badgeLabel = document.getElementById("badgeLabel");
+    const resultsSummary = document.getElementById("resultsSummary");
+
+    const playAgainBtn = document.getElementById("playAgainBtn");
+    const backHomeBtn = document.getElementById("backHomeBtn");
+
+    const startMixedBtn = document.getElementById("startMixedBtn");
+    const startWashersBtn = document.getElementById("startWashersBtn");
+
+    const categoryCards = document.querySelectorAll(".category-card");
+    const answerButtons = document.querySelectorAll(".answer-btn");
+
+    const confettiLayer = document.getElementById("confettiLayer");
+    const foxSmall = document.getElementById("foxSmall");
+
+    // --- Helpers ---
+    function showScreen(screen) {
+      [homeScreen, quizScreen, resultsScreen].forEach((s) =>
+        s.classList.remove("active")
+      );
+      screen.classList.add("active");
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function pickQuestions(category, shortModeFlag) {
+      let pool;
+      if (category === "mixed") {
+        pool = [...QUESTIONS];
+      } else {
+        pool = QUESTIONS.filter((q) => q.category === category);
+      }
+      pool = shuffle(pool);
+      if (shortModeFlag) {
+        return pool.slice(0, Math.min(5, pool.length));
+      }
+      return pool;
+    }
+
+    function updateScoreboard() {
+      scoreText.textContent = `Score: ${score}`;
+      streakText.textContent = `Streak: ${streak}`;
+      roundText.textContent = `Round: ${
+        currentQuestions.length ? currentIndex + 1 : 0
+      }/${currentQuestions.length}`;
+    }
+
+    function updateProgress() {
+      if (!currentQuestions.length) {
+        progressFill.style.width = "0%";
+        return;
+      }
+      const pct = ((currentIndex + 1) / currentQuestions.length) * 100;
+      progressFill.style.width = `${pct}%`;
+
+      if (pct <= 33) {
+        progressStars.textContent = "⭐ ☆ ☆";
+      } else if (pct <= 66) {
+        progressStars.textContent = "⭐ ⭐ ☆";
+      } else {
+        progressStars.textContent = "⭐ ⭐ ⭐";
+      }
+    }
+
+    function resetAnswerButtons() {
+      answerButtons.forEach((btn) => {
+        btn.classList.remove("disabled", "correct", "wrong");
+      });
+    }
+
+    function setAnswerButtonsDisabled(disabled) {
+      answerButtons.forEach((btn) => {
+        if (disabled) {
+          btn.classList.add("disabled");
+        } else {
+          btn.classList.remove("disabled");
+        }
+      });
+    }
+
+    function goofyFoxCelebrate() {
+      foxSmall.style.transform = "translateY(-4px) rotate(-8deg)";
+      setTimeout(() => {
+        foxSmall.style.transform = "translateY(4px) rotate(8deg)";
+      }, 120);
+      setTimeout(() => {
+        foxSmall.style.transform = "translateY(0) rotate(0deg)";
+      }, 260);
+      launchConfetti();
+    }
+
+    function goofyFoxOops() {
+      foxSmall.style.transform = "translateX(-4px)";
+      setTimeout(() => {
+        foxSmall.style.transform = "translateX(4px)";
+      }, 80);
+      setTimeout(() => {
+        foxSmall.style.transform = "translateX(0)";
+      }, 160);
+    }
+
+    function launchConfetti() {
+      confettiLayer.innerHTML = "";
+      confettiLayer.style.display = "block";
+      const colors = ["#ff006e", "#ffbe0b", "#3a86ff", "#fb5607", "#8338ec"];
+      const pieces = 40;
+      for (let i = 0; i < pieces; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+        piece.style.left = Math.random() * 100 + "%";
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDelay = Math.random() * 0.4 + "s";
+        confettiLayer.appendChild(piece);
+      }
+      setTimeout(() => {
+        confettiLayer.style.display = "none";
+        confettiLayer.innerHTML = "";
+      }, 1200);
+    }
+
+    function getBadge(score, total) {
+      const ratio = total ? score / total : 0;
+      if (ratio >= 0.9) return "Appliance Hero!";
+      if (ratio >= 0.7) return "Price Wizard!";
+      if (ratio >= 0.5) return "Deal Detective!";
+      return "Super Saver Kid!";
+    }
+
+    // --- Quiz flow ---
+    function startQuiz(category = "mixed", shortFlag = false) {
+      currentCategory = category;
+      shortMode = shortFlag;
+      currentQuestions = pickQuestions(category, shortFlag);
+      currentIndex = 0;
+      score = 0;
+      streak = 0;
+      updateScoreboard();
+      loadQuestion();
+      showScreen(quizScreen);
+    }
+
+    function loadQuestion() {
+      if (!currentQuestions.length) {
+        showResults();
+        return;
+      }
+      if (currentIndex >= currentQuestions.length) {
+        showResults();
+        return;
+      }
+
+      const q = currentQuestions[currentIndex];
+      productNameEl.textContent = q.name;
+      productMetaEl.textContent = q.meta;
+      productImageEl.textContent =
+        "Product image placeholder\n(On a real site, show the actual photo here.)";
+
+      optionAText.textContent = q.options.A;
+      optionBText.textContent = q.options.B;
+      optionCText.textContent = q.options.C;
+
+      quizFooterLeft.textContent = `Category: ${q.category.toUpperCase()}`;
+      feedbackTextEl.textContent =
+        "Pick an answer and see what the fox says!";
+      feedbackEl.style.color = "#555";
+
+      answered = false;
+      nextBtn.disabled = true;
+      resetAnswerButtons();
+      setAnswerButtonsDisabled(false);
+      updateScoreboard();
+      updateProgress();
+    }
+
+    function handleAnswer(option) {
+      if (answered) return;
+      answered = true;
+
+      const q = currentQuestions[currentIndex];
+      const correct = q.correct;
+
+      setAnswerButtonsDisabled(true);
+
+      answerButtons.forEach((btn) => {
+        const opt = btn.getAttribute("data-option");
+        if (opt === correct) {
+          btn.classList.add("correct");
+        }
+        if (opt === option && opt !== correct) {
+          btn.classList.add("wrong");
+        }
+      });
+
+      if (option === correct) {
+        score++;
+        streak++;
+        feedbackTextEl.textContent =
+          "Yay! The fox is doing a silly dance! 🎉";
+        feedbackEl.style.color = "#16a34a";
+        goofyFoxCelebrate();
+      } else {
+        streak = 0;
+        feedbackTextEl.textContent =
+          "Oops! The fox looks confused… but you can try again next round! 🙃";
+        feedbackEl.style.color = "#e11d48";
+        goofyFoxOops();
+      }
+
+      updateScoreboard();
+      nextBtn.disabled = false;
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex >= currentQuestions.length) {
+        showResults();
+      } else {
+        loadQuestion();
+      }
+    }
+
+    function showResults() {
+      const total = currentQuestions.length;
+      const badge = getBadge(score, total);
+      badgeLabel.textContent = badge;
+      resultsSummary.textContent = `You scored ${score} out of ${total}. The fox is ${
+        score / (total || 1) >= 0.5 ? "very proud of you!" : "ready to play again and help you practice!"
+      }`;
+      showScreen(resultsScreen);
+    }
+
+    // --- Event listeners ---
+    answerButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const opt = btn.getAttribute("data-option");
+        handleAnswer(opt);
+      });
+    });
+
+    nextBtn.addEventListener("click", () => {
+      nextQuestion();
+    });
+
+    skipBtn.addEventListener("click", () => {
+      answered = true;
+      streak = 0;
+      updateScoreboard();
+      feedbackTextEl.textContent =
+        "Skipped! The fox zooms to the next product! 🦊💨";
+      feedbackEl.style.color = "#555";
+      nextBtn.disabled = false;
+      setAnswerButtonsDisabled(true);
+    });
+
+    playAgainBtn.addEventListener("click", () => {
+      startQuiz(currentCategory, shortMode);
+    });
+
+    backHomeBtn.addEventListener("click", () => {
+      showScreen(homeScreen);
+    });
+
+    startMixedBtn.addEventListener("click", () => {
+      startQuiz("mixed", false);
+    });
+
+    startWashersBtn.addEventListener("click", () => {
+      startQuiz("washers", false);
+    });
+
+    categoryCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const cat = card.getAttribute("data-category");
+        if (cat === "short") {
+          startQuiz("mixed", true);
+        } else {
+          startQuiz(cat, false);
+        }
+      });
+    });
+
+    // Initial state
+    showScreen(homeScreen);
+    updateScoreboard();
+    updateProgress();
+  </script>
+</body>
+</html>
